@@ -204,7 +204,7 @@ function showMode($mode, $mmdvmconfigs) {
 function getMMDVMLog() {
 	if (MMDVMLOGPATH == "journal" ) {
 		$mmdvmLogPrefix = MMDVMLOGPREFIX;
-		$logLines = explode("\n", `/bin/journalctl -o cat -u $mmdvmLogPrefix | egrep -h "from|end|watchdog|lost" | tail -250`);
+		$logLines = explode("\n", `/bin/journalctl -o cat --reverse --since "36 hours ago" -u $mmdvmLogPrefix | egrep -m250 -h "from|end|watchdog|lost" `);
 	}
 	else {
 		// Open Logfile and copy loglines into LogLines-Array()
