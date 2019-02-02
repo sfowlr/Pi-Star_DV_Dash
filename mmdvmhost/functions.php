@@ -523,14 +523,16 @@ function getHeardList($logLines) {
 				if (array_key_exists(4,$lineTokens) && startsWith($lineTokens[4],"RSSI")) {
 					$rssi = substr($lineTokens[4], 6);
 					$rssi = substr($rssi, strrpos($rssi,'/')+1); //average only
-					$relint = intval($rssi) + 93;
-					$signal = round(($relint/6)+9, 0);
-					if ($signal < 0) $signal = 0;
-					if ($signal > 9) $signal = 9;
-					if ($relint > 0) {
-						$rssi = "S{$signal}+{$relint}dB";
-					} else {
-						$rssi = "S{$signal}";
+					if(RSSIUNITS != 'dbm') {
+						$relint = intval($rssi) + 93;
+						$signal = round(($relint/6)+9, 0);
+						if ($signal < 0) $signal = 0;
+						if ($signal > 9) $signal = 9;
+						if ($relint > 0) {
+							$rssi = "S{$signal}+{$relint}dB";
+						} else {
+							$rssi = "S{$signal}";
+						}
 					}
 				}
 			} else {

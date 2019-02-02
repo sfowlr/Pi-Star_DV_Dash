@@ -3,6 +3,7 @@
 # Be careful, when manual editing this!
 
 date_default_timezone_set('America/New_York');
+define("RSSIUNITS", "dbm"); // Options ar dbm or s
 define("MMDVMLOGPATH", "journal");
 define("MMDVMLOGPREFIX", "mmdvmhost");
 define("MMDVMINIPATH", "/etc");
