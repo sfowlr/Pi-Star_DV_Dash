@@ -202,24 +202,30 @@ function showMode($mode, $mmdvmconfigs) {
 }
 
 function getMMDVMLog() {
-	// Open Logfile and copy loglines into LogLines-Array()
-	$logLines = array();
-	$logLines1 = array();
-	$logLines2 = array();
-	if (file_exists(MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log")) {
-		$logPath = MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log";
-		$logLines1 = explode("\n", `egrep -h "from|end|watchdog|lost" $logPath | tail -250`);
+	if (MMDVMLOGPATH == "journal" ) {
+		$mmdvmLogPrefix = MMDVMLOGPREFIX;
+		$logLines = explode("\n", `/bin/journalctl -o cat -u $mmdvmLogPrefix | egrep -h "from|end|watchdog|lost" | tail -250`);
 	}
-	$logLines1 = array_slice($logLines1, -250);
-	if (sizeof($logLines1) < 250) {
-		if (file_exists(MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
-			$logPath = MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
-			$logLines2 = explode("\n", `egrep -h "from|end|watchdog|lost" $logPath | tail -250`);
+	else {
+		// Open Logfile and copy loglines into LogLines-Array()
+		$logLines = array();
+		$logLines1 = array();
+		$logLines2 = array();
+		if (file_exists(MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log")) {
+			$logPath = MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log";
+			$logLines1 = explode("\n", `egrep -h "from|end|watchdog|lost" $logPath | tail -250`);
 		}
+		$logLines1 = array_slice($logLines1, -250);
+		if (sizeof($logLines1) < 250) {
+			if (file_exists(MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
+				$logPath = MMDVMLOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
+				$logLines2 = explode("\n", `egrep -h "from|end|watchdog|lost" $logPath | tail -250`);
+			}
+		}
+		$logLines2 = array_slice($logLines2, -250);
+		$logLines = $logLines1 + $logLines2;
+		$logLines = array_slice($logLines, -250);
 	}
-	$logLines2 = array_slice($logLines2, -250);
-	$logLines = $logLines1 + $logLines2;
-	$logLines = array_slice($logLines, -250);
 	return $logLines;
 }
 
